@@ -27,6 +27,7 @@ const RegisterPage = () => {
                 password    : password,
             };
             await axios.post("/register", prop);
+            alert("registration successed.");
         }
         catch (e)
         {
