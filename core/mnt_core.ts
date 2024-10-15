@@ -2,8 +2,11 @@
 
 class ProjectSettings
 {
-    port        : number = 7000;
-    serverUrl   : string = `http://localhost:${this.port}`;
+    port            : number = 7000;
+    serverUrl       : string = `http://localhost:${this.port}`;
+    uploadPhotoDir  : string = "upload/photo"
+
+    public get serverUploadPhotoUrl() : string { return `${this.serverUrl}/${this.uploadPhotoDir}`; }
 
     public static get instance() { return this.s_instance || (this.s_instance = new this()); }
     private constructor() {}

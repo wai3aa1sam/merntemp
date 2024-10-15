@@ -6,8 +6,11 @@ import mongoose, { ObjectId } from "mongoose";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import CookieParser from "cookie-parser"
+import ImageDownloader from "image-downloader"
+import fs from "fs"
 
 import {UserModel, UserInfo, UserToken} from "./model/User"
+import { url } from "inspector";
 
 //const port = mnt.ProjectSetting.instance.port;
 const port : number = ProjectSettings.instance.port;
@@ -15,6 +18,8 @@ const bcryptSalt    = bcrypt.genSaltSync();
 const jwtSecret     = "bcrypt.genSaltSync()";
 
 const loginCookieName = "token";
+
+const uploadPhotoRoot = __dirname + "/../" + ProjectSettings.instance.uploadPhotoDir;
 
 const app   = express();
 const cors_ = cors(
@@ -26,6 +31,13 @@ const cors_ = cors(
 app.use(cors_);
 app.use(express.json());
 app.use(CookieParser());
+app.use(`/${ProjectSettings.instance.uploadPhotoDir}`, express.static(uploadPhotoRoot));
+//app.use(`/upload`, express.static(uploadPhotoRoot));
+
+if (!fs.existsSync(uploadPhotoRoot))
+    {
+    fs.mkdirSync(uploadPhotoRoot, { recursive: true });
+}
 
 mongoose.connect(EnvVariables.instance.apiDataBaseUrl);
 
@@ -110,6 +122,35 @@ app.get("/profile", (req, resp) =>
 app.post("/logout", (req, resp) =>
 {
     resp.cookie(loginCookieName, "").json(true);
+});
+
+app.post("/upload-by-link", async (req, resp) =>
+{
+    const {link} = req.body;
+
+    const newName   : string = "photo_" + Date.now() + ".jpg";
+    const filename  : string = uploadPhotoRoot + "/" + newName;
+
+    try
+    {
+        if (!link)
+            throw "null link";
+
+        await ImageDownloader.image(
+            {
+                url     : link,
+                dest    : filename,
+            }
+        );
+        /*
+            https://variety.com/wp-content/uploads/2021/07/Rick-Astley-Never-Gonna-Give-You-Up.png?w=1000&h=563&crop=1
+        */
+        resp.json(newName);
+    }
+    catch (e)
+    {
+        resp.status(HttpErrorCode.UnprocessableEntity).json("invalid url: " + link);
+    }
 });
 
 function onConnectServer() 

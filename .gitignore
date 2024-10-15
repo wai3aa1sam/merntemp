@@ -3,5 +3,7 @@
 build/
 node_modules/
 
+api/upload/
+
 *.tsbuildinfo
 .env

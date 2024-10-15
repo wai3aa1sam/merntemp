@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
-class UserInfo extends mongoose.Document
+interface UserInfo extends mongoose.Document
 {
-    name        : string = "";
-    email       : string = "";
-    password    : string = "";
+    name        : string;
+    email       : string;
+    password    : string;
 };
 
 interface UserToken
@@ -13,7 +13,7 @@ interface UserToken
     id    : unknown;
 };
 
-const UserSchema = new mongoose.Schema<UserInfo>(
+const userSchema = new mongoose.Schema<UserInfo>(
     {
         name        : String,
         email       : {type : String, unique : true},
@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema<UserInfo>(
     }
 );
 
-const UserModel = mongoose.model<UserInfo>("User", UserSchema);
+const UserModel = mongoose.model<UserInfo>("User", userSchema);
 
 export 
 {
