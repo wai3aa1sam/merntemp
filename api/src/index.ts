@@ -11,6 +11,9 @@ import fs from "fs"
 
 import {UserModel, UserInfo, UserToken} from "./model/User"
 import { url } from "inspector";
+import { PlaceInfo, PlaceModel } from "./model/Place";
+import { PlaceData } from "../../core/interop/PlaceInterop"
+
 
 //const port = mnt.ProjectSetting.instance.port;
 const port : number = ProjectSettings.instance.port;
@@ -101,6 +104,7 @@ app.post("/login", async (req, resp) =>
     }
 });
 
+
 app.get("/profile", (req, resp) =>
 {
     const {token} = req.cookies;
@@ -109,8 +113,9 @@ app.get("/profile", (req, resp) =>
         jwt.verify(token, jwtSecret, {}, async (err, userData) =>
         {
             if (err) throw err;
-            const {name, email, _id} = await UserModel.findById((userData as UserToken).id) as UserInfo;
-            resp.json({name, email, _id});
+            const user : UserInfo | null = await UserModel.findById((userData as UserToken).id); 
+            //const user = await UserModel.findById((userData as UserToken).id); // this get Document
+            resp.json(user);
         });
     }
     else
@@ -151,6 +156,22 @@ app.post("/upload-by-link", async (req, resp) =>
     {
         resp.status(HttpErrorCode.UnprocessableEntity).json("invalid url: " + link);
     }
+});
+
+app.post("/places", (req, resp) =>
+{
+    const {token} = req.cookies;
+    const placeData : PlaceData = req.body;
+    
+    jwt.verify(token, jwtSecret, {}, async (err, userData) =>
+        {
+            if (err) throw err;
+            let userToken = userData as UserToken;
+            let placeInfo = new PlaceInfo(userToken.id as mongoose.Schema.Types.ObjectId, placeData);
+            const placeDoc = await PlaceModel.create(placeInfo);
+            resp.json(placeDoc);
+        }
+    );
 });
 
 function onConnectServer() 
