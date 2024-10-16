@@ -76,7 +76,7 @@ const PlacesFormPage = () => {
                 {preInput("Address", "address to this place")}
                 <input type = "text" value = {address} onChange = { ev => setAddress(ev.target.value) } placeholder = "address"/>
                 
-                <PhotoUploader addedPhotos = {addedPhotos} onAddPhoto = {setAddedPhotos} ></PhotoUploader>
+                <PhotoUploader addedPhotos = {addedPhotos} onChangePhotos = {setAddedPhotos} ></PhotoUploader>
 
                 {preInput("Description", "description of the place")}
                 <textarea value = {description} onChange = { ev => setDescription(ev.target.value) } />

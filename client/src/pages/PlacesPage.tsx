@@ -35,7 +35,7 @@ const PlacesPage = () => {
                     (place, i) =>
                     (
                         <Link to = {"/account/places/" + place._id} key = {place._id} className = "flex cursor-pointer gap-4 bg-gray-100 p-2 rounded-2xl">
-                             <div className = "flex size-32 bg-gray-300 grow shrink-0">
+                             <div className = "flex size-40 bg-gray-200 shrink-0">
                                 {
                                     place.photos && place.photos.length > 0 
                                     && (
