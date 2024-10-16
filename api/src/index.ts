@@ -11,7 +11,7 @@ import fs from "fs"
 
 import {UserModel, UserInfo, UserToken} from "./model/User"
 import { url } from "inspector";
-import { PlaceInfo, PlaceModel } from "./model/Place";
+import { PlaceData_make, PlaceInfo, PlaceModel } from "./model/Place";
 import { PlaceData } from "../../core/interop/PlaceInterop"
 
 
@@ -113,7 +113,7 @@ app.get("/profile", (req, resp) =>
         jwt.verify(token, jwtSecret, {}, async (err, userData) =>
         {
             if (err) throw err;
-            const user : UserInfo | null = await UserModel.findById((userData as UserToken).id); 
+            const user : UserInfo | null = await UserModel.findById((userData as UserToken).id);
             //const user = await UserModel.findById((userData as UserToken).id); // this get Document
             resp.json(user);
         });
@@ -167,9 +167,54 @@ app.post("/places", (req, resp) =>
         {
             if (err) throw err;
             let userToken = userData as UserToken;
-            let placeInfo = new PlaceInfo(userToken.id as mongoose.Schema.Types.ObjectId, placeData);
+            let placeInfo = new PlaceInfo(placeData, userToken.id);
             const placeDoc = await PlaceModel.create(placeInfo);
             resp.json(placeDoc);
+        }
+    );
+});
+
+app.get("/places", (req, resp) =>
+{
+    const {token} = req.cookies;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) =>
+    {
+        if (err) throw err;
+        const id = (userData as UserToken).id;
+        
+        const placeDoc = await PlaceModel.find({owner : id});
+        resp.json(placeDoc);
+    });
+});
+
+app.get("/places/:id", async (req, resp) =>
+{
+    const {id} = req.params;
+    const placeDoc = await PlaceModel.findById(id);
+    //console.log(placeDoc?.photos);
+    resp.json(placeDoc);
+});
+
+app.put("/places", async (req, resp) =>
+{
+    const {token} = req.cookies;
+    const placeData : PlaceData = req.body;
+    
+    jwt.verify(token, jwtSecret, {}, async (err, userData) =>
+        {
+            if (err) throw err;
+            let userToken = userData as UserToken;
+
+            const placeDoc = await PlaceModel.findById(placeData._id);
+
+            // userToken.id.equals(placeDoc.owner) -> error : userToken.id.equals is not a function...
+            if (placeDoc && userToken.id.toString() === placeDoc.owner?.toString())        
+            {
+                let placeInfo = new PlaceInfo(placeData, userToken.id);
+                placeDoc.set(placeInfo);
+                await placeDoc.save();
+                resp.json("ok");
+            }
         }
     );
 });

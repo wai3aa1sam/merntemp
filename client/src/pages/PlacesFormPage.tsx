@@ -1,21 +1,23 @@
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { preInput } from "../component/InputDom"
 import { PlaceData } from "../../../core/interop/PlaceInterop";
 import axios from "axios";
 import PhotoUploader from "../component/PhotoUploader";
 import AccountNav from "./AccountNav";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 const PlacesFormPage = () => {
+
+    const {id} = useParams();
     
     const [title,           setTitle]           = useState("");
     const [address,         setAddress]         = useState("");
     const [description,     setDescription]     = useState("");
-    const [addedPhotos,     setAddedPhotos]     = useState([]);
+    const [addedPhotos,     setAddedPhotos]     = useState<string[]>([]);
     
     const [redirect,        setRedirect]        = useState(false);
 
-    async function addNewPlace(ev : FormEvent)
+    async function savePlace(ev : FormEvent)
     {
         ev.preventDefault();
         if (!title)
@@ -23,10 +25,41 @@ const PlacesFormPage = () => {
             alert("title must not empty");
             return;
         }
-        const placeData : PlaceData = { title : title, address : address, addedPhotos : addedPhotos, description : description };
-        const {resp} = await axios.post("/places", placeData);
+
+        const isNewPlace : boolean = !id;
+        let placeData : PlaceData = { title : title, address : address, photos : addedPhotos, description : description };
+
+        if (isNewPlace)
+        {
+            const {resp} = await axios.post("/places", placeData);
+        }
+        else
+        {
+            placeData._id = id;
+            const {resp} = await axios.put("/places", placeData); // { id, ...placeData }
+        }
+        
         setRedirect(true);
     }
+
+    useEffect(() =>
+    {
+        if (!id)
+        {
+            return;
+        }
+        axios.get("/places/" + id)
+             .then(
+                (resp) =>
+                {
+                    const place = resp.data as PlaceData;
+                    setTitle(place.title);
+                    setAddress(place.address);
+                    setAddedPhotos(place.photos);
+                    setDescription(place.description);
+                }
+        );
+    }, [id]);
 
     if (redirect)
     {
@@ -36,7 +69,7 @@ const PlacesFormPage = () => {
     return (
         <div>
             <AccountNav></AccountNav>
-            <form onSubmit = {addNewPlace}>
+            <form onSubmit = {savePlace}>
                 {preInput("Title", "title for your place, should be short and catchy as in advertisement")}
                 <input type = "text" value = {title} onChange = { ev => setTitle(ev.target.value) } placeholder = "title, for example: My apartment"/>
 

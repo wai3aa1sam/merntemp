@@ -52,12 +52,6 @@ const ProfilePage = () => {
                     </div>
                 )
             }
-            {/* {
-                subpage === "places"
-                && (
-                    <PlacesPage></PlacesPage>
-                )
-            } */}
         </div>
     )
 }

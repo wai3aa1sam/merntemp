@@ -1,12 +1,12 @@
 
-interface PlaceData
+class PlaceData
 {
-    title       : string;
-    address     : string;
-    addedPhotos : string[];
-    description : string;
+    _id        ?: any;
+    title       : string    = "";
+    address     : string    = "";
+    photos      : string[]  = [];
+    description : string    = "";
 };
-
 
 export
 {

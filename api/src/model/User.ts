@@ -10,7 +10,7 @@ interface UserInfo // extends mongoose.Document
 interface UserToken
 {
     email : string;
-    id    : unknown;
+    id    : mongoose.Types.ObjectId;
 };
 
 const userSchema = new mongoose.Schema<UserInfo>(

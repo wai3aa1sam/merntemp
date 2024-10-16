@@ -1,9 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState,  } from 'react'
 import { preInput } from "./InputDom"
 import axios from "axios";
 import { ProjectSettings } from "../mnt_client_config";
 
-const PhotoUploader = ( { addedPhotos, onAddPhoto } ) => 
+interface Props
+{
+    addedPhotos : string[];
+    onAddPhoto  : React.Dispatch<React.SetStateAction<string[]>>;
+};
+
+const PhotoUploader = ( {addedPhotos, onAddPhoto} : Props ) => 
 {
     const [photoLink,       setPhotoLink]       = useState("");
     
@@ -40,7 +46,7 @@ const PhotoUploader = ( { addedPhotos, onAddPhoto } ) =>
             </div>
 
             <div className = "mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {addedPhotos.length > 0 && addedPhotos.map(
+                { addedPhotos && addedPhotos.length > 0 && addedPhotos.map(
                     (link, i) =>
                     (
                         <div key = {link}>
