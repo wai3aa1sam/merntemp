@@ -11,7 +11,7 @@ const PlacesPage = () => {
 
     useEffect(() =>
     {
-        axios.get("/places").then(
+        axios.get("/user-places").then(
             ({data}) =>
             {
                 setPlaces(data);
@@ -35,11 +35,12 @@ const PlacesPage = () => {
                     (place, i) =>
                     (
                         <Link to = {"/account/places/" + place._id} key = {place._id} className = "flex cursor-pointer gap-4 bg-gray-100 p-2 rounded-2xl">
-                             <div className = "flex size-40 bg-gray-200 shrink-0">
+                             <div className = "flex size-40 bg-gray-200 shrink-0 rounded-2xl">
                                 {
                                     place.photos && place.photos.length > 0 
-                                    && (
-                                        <img className = "object-cover" src = {ProjectSettings.instance.serverUploadPhotoUrl + "/" + place.photos[0]} alt = ""></img>
+                                    && 
+                                    (
+                                        <img className = "rounded-2xl object-cover aspect-square" src = {ProjectSettings.instance.serverUploadPhotoUrl + "/" + place.photos[0]} alt = ""></img>
                                     )        
                                 }
                             </div>

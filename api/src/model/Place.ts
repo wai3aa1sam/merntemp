@@ -15,6 +15,7 @@ class PlaceInfo // extends mongoose.Document
     checkIn     ?: Number;
     checkOut    ?: Number;
     maxGuests   ?: Number;
+    price       ?: Number;
 
     constructor(data : PlaceData, ownerId : ObjectId)
     {

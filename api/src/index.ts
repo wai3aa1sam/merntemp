@@ -174,7 +174,7 @@ app.post("/places", (req, resp) =>
     );
 });
 
-app.get("/places", (req, resp) =>
+app.get("/user-places", (req, resp) =>
 {
     const {token} = req.cookies;
     jwt.verify(token, jwtSecret, {}, async (err, userData) =>
@@ -199,6 +199,7 @@ app.put("/places", async (req, resp) =>
 {
     const {token} = req.cookies;
     const placeData : PlaceData = req.body;
+    //console.log(placeData.srcImg());
     
     jwt.verify(token, jwtSecret, {}, async (err, userData) =>
         {
@@ -217,6 +218,11 @@ app.put("/places", async (req, resp) =>
             }
         }
     );
+});
+
+app.get("/places", async (req, resp) =>
+{
+    resp.json(await PlaceModel.find());
 });
 
 function onConnectServer() 
