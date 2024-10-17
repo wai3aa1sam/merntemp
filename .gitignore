@@ -4,6 +4,7 @@ build/
 node_modules/
 
 api/upload/
+api/log/
 
 *.tsbuildinfo
 .env

@@ -9,12 +9,19 @@ const PlacesPage = () => {
 
     const [places, setPlaces] = useState<PlaceData[]>([]);
 
+    const descMaxDisplay = 750;
+
     useEffect(() =>
     {
         axios.get("/user-places").then(
-            ({data}) =>
+            (resp) =>
             {
-                setPlaces(data);
+                /*
+                as PlaceData wont make it as PlaceData type, it also is a Object
+                use this https://github.com/typestack/class-transformer
+                */
+                const placeData = resp.data;
+                setPlaces(placeData);
             }
         );
     }, []);
@@ -48,7 +55,13 @@ const PlacesPage = () => {
                             
                             <div className = "grow-0 shrink">
                                 <h2 className = "text-xl">{place.title}</h2>
-                                <p className = "text-sm mt-2">{place.description}</p>
+                                <p className = "text-sm mt-2">
+                                    {
+                                        (place.description.length <= descMaxDisplay) ?
+                                            place.description 
+                                            : `${place.description.slice(0, descMaxDisplay)}...`
+                                    }
+                                </p>
                             </div>
                         </Link>
                     )

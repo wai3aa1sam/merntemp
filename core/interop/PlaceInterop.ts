@@ -12,7 +12,7 @@ class PlaceData
     public srcImg(index : number = 0) : string 
     { 
         if (index < 0 || index >= this.photos.length) 
-            {
+        {
             throw new Error("Invalid photo index");
         }
         return ProjectSettings.instance.serverUploadPhotoUrl + "/" + this.photos[index]; 
